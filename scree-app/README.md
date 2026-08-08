@@ -9,7 +9,12 @@ npm install && npm run tauri dev
 
 `Cmd/Ctrl + ,` evaluates the current tab
 
-`Cmd/Ctrl + .` stops audio. 
+`Cmd/Ctrl + .` stops audio.
+
+The play button is lit green while the engine is holding a program, and goes
+dark when it is stopped — so what is running is readable at a glance, from
+across a room. While a take is being recorded the red record button is the
+light instead, since the two would otherwise be making the same claim twice.
 
 
 ## Imports
@@ -294,6 +299,56 @@ let pos = ramp(1 / stereo.secs)
 (sample(stereo, pos, 0) + sample(stereo, pos, 1)) * 0.5
 ```
 
+
+## Recording
+
+The **record** button sits beside play and stop. Pressing it **plays the file
+and records it** — one gesture, because what you want on disk is the piece from
+its first note, and pressing play and then record loses the attack. Everything
+the engine is making goes to the file: the persistent graph, the pattern
+voices, and the master fader as you move it. What you get is the performance as
+it was heard, evals and all — there is no offline render, because half of what
+a live-coded piece is is *when* you changed it.
+
+While a take runs the button is a stop square carrying its length, so it is
+also the clock. Press it and the music stops and the file is finished and
+saved — the fade-out is recorded too, so a take ends on the release of its last
+note rather than on a click.
+
+Press record again for a second take.
+
+If the file will not compile, the take is closed straight away and the problems
+panel says why — a red button recording the silence after a typo helps nobody.
+The empty file is left where it was made rather than removed.
+
+Where the file goes and what it is written as are in the **Settings** tab of
+the right-hand panel, decided before a take rather than at the moment you press
+record:
+
+- **Output folder.** The open project's own folder unless you choose another.
+  A folder you choose is remembered for every project on this machine — it is a
+  path into *this* disk, so it lives with the app rather than in the project's
+  `scree-project.json`, which is meant to be shared.
+- **File type.** `WAV — 16-bit` is what everything can read. `WAV — 32-bit
+  float` is exactly what the engine rendered, headroom and all, and is what to
+  record if the take is going to be mixed. Nothing else is offered, because
+  nothing else can be written.
+
+A recording is named for the project and the moment it was played — `Night
+Piece 2026-08-08 21-14-03.wav` — and nothing is ever recorded over: a name
+already on the disk gets a number rather than being replaced.
+
+Two things are worth knowing about the file:
+
+- It is written as you play, and its header is brought up to date once a
+  second. A session that ends in a crash still leaves a playable take.
+- A recording is a WAV, so it stops at four gigabytes — about six hours of
+  16-bit stereo. At that point the take is closed properly and the problems
+  panel says so.
+
+A finished take is listed at the bottom of the settings panel, with a Reveal
+that opens it in the Finder. And since it is an ordinary audio file, the next
+program can `load` it.
 
 ## Rhythm in note values
 
